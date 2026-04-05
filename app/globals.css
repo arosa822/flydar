@@ -1,0 +1,67 @@
+@import "tailwindcss";
+
+@source "../app";
+@source "../components";
+@source "../lib";
+
+/* Gruvbox dark palette */
+@theme {
+  --color-gb-bg:     #282828;
+  --color-gb-bg1:    #3c3836;
+  --color-gb-bg2:    #504945;
+  --color-gb-bg3:    #665c54;
+  --color-gb-bg4:    #7c6f64;
+  --color-gb-fg:     #ebdbb2;
+  --color-gb-fg2:    #d5c4a1;
+  --color-gb-fg4:    #a89984;
+  --color-gb-red:    #fb4934;
+  --color-gb-green:  #b8bb26;
+  --color-gb-yellow: #fabd2f;
+  --color-gb-blue:   #83a598;
+  --color-gb-orange: #fe8019;
+  --color-gb-aqua:   #8ec07c;
+  --color-gb-gray:   #928374;
+}
+
+:root {
+  --gb-bg:     #282828;
+  --gb-bg1:    #3c3836;
+  --gb-bg2:    #504945;
+  --gb-bg3:    #665c54;
+  --gb-bg4:    #7c6f64;
+  --gb-fg:     #ebdbb2;
+  --gb-fg2:    #d5c4a1;
+  --gb-fg4:    #a89984;
+  --gb-red:    #fb4934;
+  --gb-green:  #b8bb26;
+  --gb-yellow: #fabd2f;
+  --gb-blue:   #83a598;
+  --gb-orange: #fe8019;
+  --gb-aqua:   #8ec07c;
+  --gb-gray:   #928374;
+}
+
+html,
+body {
+  min-height: 100%;
+  background-color: #282828;
+  color: #ebdbb2;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+input,
+textarea,
+select {
+  background: transparent;
+  color: inherit;
+  outline: none;
+  border: none;
+}
+
+input::placeholder {
+  color: #665c54;
+}
+
+* {
+  box-sizing: border-box;
+}
