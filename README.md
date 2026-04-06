@@ -53,6 +53,55 @@ npm run build    # Production build
 npm run lint     # ESLint
 ```
 
+## Deploying to a Server with Nginx
+
+These steps assume a Linux server with Docker and Nginx installed, serving another app at port 3000 on `/`.
+
+**1. Install Docker**
+```bash
+curl -fsSL https://get.docker.com | sh
+```
+
+**2. Clone and build**
+```bash
+git clone git@github.com:arosa822/flydar.git
+cd flydar
+docker build --build-arg NEXT_PUBLIC_BASE_PATH=/flydar -t flydar .
+docker run -d --restart unless-stopped -p 3001:3001 flydar
+```
+
+**3. Add the Nginx location block**
+
+Inside your existing `server {}` block, add:
+
+```nginx
+location /flydar {
+    proxy_pass http://localhost:3001;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection 'upgrade';
+    proxy_set_header Host $host;
+    proxy_cache_bypass $http_upgrade;
+}
+```
+
+**4. Reload Nginx**
+```bash
+sudo nginx -t && sudo systemctl reload nginx
+```
+
+The app will be available at `yourdomain.com/flydar`.
+
+**Updating**
+```bash
+cd flydar && git pull
+docker build --build-arg NEXT_PUBLIC_BASE_PATH=/flydar -t flydar .
+docker rm -f $(docker ps -q --filter ancestor=flydar)
+docker run -d --restart unless-stopped -p 3001:3001 flydar
+```
+
+---
+
 ## Project Structure
 
 ```
