@@ -12,15 +12,21 @@ export function getFavorites(): FavoriteLocation[] {
   }
 }
 
+function notifyChanged() {
+  window.dispatchEvent(new CustomEvent("flydar:favorites-changed"));
+}
+
 export function addFavorite(location: FavoriteLocation): void {
   const current = getFavorites();
   if (current.some((f) => f.id === location.id)) return;
   localStorage.setItem(STORAGE_KEY, JSON.stringify([...current, location]));
+  notifyChanged();
 }
 
 export function removeFavorite(id: string): void {
   const current = getFavorites();
   localStorage.setItem(STORAGE_KEY, JSON.stringify(current.filter((f) => f.id !== id)));
+  notifyChanged();
 }
 
 export function isFavorite(id: string): boolean {

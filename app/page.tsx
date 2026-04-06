@@ -83,7 +83,10 @@ export default function HomePage() {
   const [favorites, setFavorites] = useState<FavoriteLocation[]>([]);
 
   useEffect(() => {
-    setFavorites(getFavorites());
+    const refresh = () => setFavorites(getFavorites());
+    refresh();
+    window.addEventListener("flydar:favorites-changed", refresh);
+    return () => window.removeEventListener("flydar:favorites-changed", refresh);
   }, []);
 
   function handleLocationSelect(location: GeoLocation) {
@@ -99,7 +102,7 @@ export default function HomePage() {
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#282828" }}>
       <header style={{ padding: "32px 16px 16px" }}>
-        <h1 style={{ fontSize: 28, fontWeight: 700, color: "#ebdbb2", margin: "0 0 4px" }}>Flydar</h1>
+        <img src={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/flydar_logo_text.png`} alt="Flydar" style={{ height: 48, marginBottom: 8, display: "block" }} />
         <p style={{ fontSize: 14, color: "#a89984", margin: "0 0 8px" }}>Winds aloft for PPG &amp; ultralight pilots</p>
         <p style={{ fontSize: 13, color: "#665c54", margin: "0 0 24px", lineHeight: 1.6, maxWidth: 480 }}>
           See wind speed and direction at every altitude — from surface to 10,000 ft — across a 6-day hourly forecast. Search any location, save your flying sites, and check flyability at a glance.

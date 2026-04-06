@@ -5,6 +5,7 @@ import { Providers } from "./providers";
 export const metadata: Metadata = {
   title: "Flydar",
   description: "Winds aloft forecasts for PPG and ultralight pilots",
+  icons: { icon: `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/flydar_logo.png` },
 };
 
 export default function RootLayout({
