@@ -7,12 +7,21 @@ import { LocationSearch } from "@/components/LocationSearch/LocationSearch";
 import { ConditionBar } from "@/components/ConditionBar/ConditionBar";
 import { fetchLocationForecast } from "@/lib/api/openmeteo";
 import { rateDayConditions } from "@/lib/weather/conditionRating";
-import { makeFavoriteId, getFavorites, removeFavorite } from "@/lib/storage/favorites";
+import { makeFavoriteId, getFavorites, removeFavorite, renameFavorite } from "@/lib/storage/favorites";
 import type { FavoriteLocation, GeoLocation } from "@/types/weather";
 
 function FavoriteCard({ favorite, onRemove }: { favorite: FavoriteLocation; onRemove: () => void }) {
   const router = useRouter();
   const location: GeoLocation = { name: favorite.name, lat: favorite.lat, lon: favorite.lon, elevationM: 0 };
+  const [editing, setEditing] = useState(false);
+  const [draftName, setDraftName] = useState(favorite.name);
+
+  function commitRename() {
+    const trimmed = draftName.trim();
+    if (trimmed && trimmed !== favorite.name) renameFavorite(favorite.id, trimmed);
+    else setDraftName(favorite.name);
+    setEditing(false);
+  }
 
   const { data } = useQuery({
     queryKey: ["forecast", favorite.lat, favorite.lon],
@@ -40,7 +49,25 @@ function FavoriteCard({ favorite, onRemove }: { favorite: FavoriteLocation; onRe
       }}
     >
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 12 }}>
-        <h2 style={{ fontWeight: 600, fontSize: 16, color: "#ebdbb2", margin: 0 }}>{favorite.name}</h2>
+        {editing ? (
+          <input
+            autoFocus
+            value={draftName}
+            onChange={(e) => setDraftName(e.target.value)}
+            onBlur={commitRename}
+            onKeyDown={(e) => { if (e.key === "Enter") commitRename(); if (e.key === "Escape") { setDraftName(favorite.name); setEditing(false); } }}
+            onClick={(e) => e.stopPropagation()}
+            style={{ fontWeight: 600, fontSize: 16, color: "#ebdbb2", background: "transparent", border: "none", borderBottom: "1px solid #83a598", outline: "none", width: "100%", padding: 0 }}
+          />
+        ) : (
+          <h2
+            title="Click to rename"
+            onClick={(e) => { e.stopPropagation(); setEditing(true); }}
+            style={{ fontWeight: 600, fontSize: 16, color: "#ebdbb2", margin: 0, cursor: "text" }}
+          >
+            {favorite.name}
+          </h2>
+        )}
         <button
           onClick={(e) => { e.stopPropagation(); onRemove(); }}
           aria-label="Remove from favorites"

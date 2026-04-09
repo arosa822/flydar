@@ -29,6 +29,12 @@ export function removeFavorite(id: string): void {
   notifyChanged();
 }
 
+export function renameFavorite(id: string, newName: string): void {
+  const current = getFavorites();
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(current.map((f) => f.id === id ? { ...f, name: newName } : f)));
+  notifyChanged();
+}
+
 export function isFavorite(id: string): boolean {
   return getFavorites().some((f) => f.id === id);
 }
