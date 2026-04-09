@@ -39,7 +39,7 @@ function FavoriteCard({ favorite, onRemove }: { favorite: FavoriteLocation; onRe
 
   return (
     <div
-      onClick={() => handleClick()}
+      onClick={() => { if (!editing) handleClick(); }}
       style={{
         borderRadius: 16,
         padding: 16,
@@ -149,7 +149,7 @@ export default function HomePage() {
         ) : (
           <>
             <p style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: "0.1em", color: "#a89984", margin: "8px 0 12px" }}>
-              Saved Locations
+              Saved LZ's (click to rename)
             </p>
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               {favorites.map((fav) => (

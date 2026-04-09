@@ -108,7 +108,7 @@ export default function LocationPage({ params }: PageProps) {
         borderBottom: "1px solid #504945",
       }}>
         <button
-          onClick={() => router.back()}
+          onClick={() => { router.refresh(); router.back(); }}
           aria-label="Back"
           style={{ background: "transparent", border: "none", cursor: "pointer", color: "#83a598", padding: 4, lineHeight: 0 }}
         >

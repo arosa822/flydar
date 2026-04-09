@@ -70,8 +70,17 @@ export function WindGrid({ hours, selectedHourIndex, onSelectHour, sunTimes }: W
     }
   }
 
-  const showDayLabel = (i: number) =>
-    i === 0 || hours[i].time.slice(0, 10) !== hours[i - 1].time.slice(0, 10);
+  const isNewDay  = (i: number) => i === 0 || hours[i].time.slice(0, 10) !== hours[i - 1].time.slice(0, 10);
+  const isSunrise = (i: number) => i > 0 && !daylightSet.has(i - 1) && daylightSet.has(i) && !isNewDay(i);
+  const isSunset  = (i: number) => i > 0 && daylightSet.has(i - 1) && !daylightSet.has(i);
+  const showLabel = (i: number) => isNewDay(i) || isSunrise(i) || isSunset(i);
+
+  function transitionLabel(i: number): string {
+    const date = formatDayLabel(hours[i].time);
+    if (isSunrise(i)) return `▲ ${date}`;
+    if (isSunset(i))  return `▼ ${date}`;
+    return date;
+  }
 
   return (
     <div ref={scrollRef} style={{ overflowX: "auto", backgroundColor: "#282828" }}>
@@ -85,7 +94,11 @@ export function WindGrid({ hours, selectedHourIndex, onSelectHour, sunTimes }: W
             {hours.map((hour, i) => {
               const isSelected = i === selectedHourIndex;
               const isDay = daylightSet.has(i);
-              const newDay = showDayLabel(i);
+              const newDay = isNewDay(i);
+              const hasLabel = showLabel(i);
+              const borderLeft = newDay
+                ? "3px solid #7c6f64"
+                : hasLabel ? "1px solid #504945" : "none";
               return (
                 <th
                   key={hour.time}
@@ -93,24 +106,24 @@ export function WindGrid({ hours, selectedHourIndex, onSelectHour, sunTimes }: W
                   style={{
                     width: COL_W, padding: "6px 0 4px", cursor: "pointer",
                     backgroundColor: isDay ? "rgba(255,190,40,0.05)" : "transparent",
-                    borderLeft: newDay ? "1px solid #504945" : "none",
+                    borderLeft,
                     borderTop: isSelected ? "2px solid #83a598" : "2px solid transparent",
                     verticalAlign: "bottom", userSelect: "none",
                     position: "relative",
                   }}
                 >
-                  {newDay && (
+                  {hasLabel && (
                     <div style={{
                       position: "absolute", top: 0, left: 0, right: 0,
                       fontSize: 9, color: "#7c6f64", textTransform: "uppercase",
                       letterSpacing: "0.06em", textAlign: "center", paddingTop: 2,
                       whiteSpace: "nowrap", overflow: "hidden",
                     }}>
-                      {formatDayLabel(hour.time)}
+                      {transitionLabel(i)}
                     </div>
                   )}
                   <div style={{
-                    fontSize: 12, textAlign: "center", paddingTop: newDay ? 12 : 0,
+                    fontSize: 12, textAlign: "center", paddingTop: hasLabel ? 12 : 0,
                     color: isSelected ? "#ebdbb2" : "#a89984",
                     fontWeight: isSelected ? 600 : 400,
                   }}>
@@ -136,7 +149,11 @@ export function WindGrid({ hours, selectedHourIndex, onSelectHour, sunTimes }: W
                 const rating = level ? rateCondition(level.speedMph) : "good";
                 const isSelected = i === selectedHourIndex;
                 const isDay = daylightSet.has(i);
-                const newDay = showDayLabel(i);
+                const newDay = isNewDay(i);
+                const hasLabel = showLabel(i);
+                const borderLeft = newDay
+                  ? "3px solid #7c6f64"
+                  : hasLabel ? "1px solid #504945" : "none";
                 return (
                   <td
                     key={hour.time}
@@ -145,7 +162,7 @@ export function WindGrid({ hours, selectedHourIndex, onSelectHour, sunTimes }: W
                       width: COL_W, padding: "2px 1px", cursor: "pointer",
                       textAlign: "center",
                       backgroundColor: isDay ? "rgba(255,190,40,0.05)" : "transparent",
-                      borderLeft: newDay ? "1px solid #504945" : "none",
+                      borderLeft,
                     }}
                   >
                     {level && (
